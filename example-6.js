@@ -3,7 +3,7 @@ import {cleanConsole, createAll} from './data';
 const companies = createAll();
 
 cleanConsole(6, companies);
-console.log('---- EXAMPLE 6 --- ', 'Put here your function');
+console.log('---- EXAMPLE 6 --- ', camiloEX6());
 
 // -----------------------------------------------------------------------------
 // INSTRUCCIONES EN ESPAÑOL
@@ -36,3 +36,16 @@ const example = {
 };
 
 console.log(example);
+
+function camiloEX6() {
+  const newObjects = companies.map(function(company) {
+    company.users= company.users.map(function(user) {
+      const attribute = user.firstName + user.lastName + user.age;
+      const newUser={};
+      newUser[attribute] = user.car;
+      return newUser;
+    });
+    return company.users;
+  });
+  return newObjects;
+}
