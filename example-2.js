@@ -2,7 +2,7 @@ import {cleanConsole, createAll} from './data';
 const companies = createAll();
 
 cleanConsole(2, companies);
-console.log('---- EXAMPLE 2 --- ', 'Put here your function');
+console.log('---- EXAMPLE 2 --- ', camiloEX2());
 
 // -----------------------------------------------------------------------------
 // INSTRUCCIONES EN ESPAÑOL
@@ -13,20 +13,23 @@ console.log('---- EXAMPLE 2 --- ', 'Put here your function');
 // función "hasCar" y el atributo "usersLength" deben indicar el total de
 // "users" correspondientes al parámetro "hasCar".
 
-// -----------------------------------------------------------------------------
-// INSTRUCTIONS IN ENGLISH
 
-// Create a function taking as parameter the variable "companies" and the
-// boolean "hasCar". For each "company" you must keep only the
-// "users" whose attribute value "car" is equal to the parameter of the
-// "hasCar" function and the "usersLength" attribute must indicate the number of
-// "users" corresponding to the "hasCar" parameter.
+function camiloEX2() {
+  const HASCAR= true;
+  const companies2= companies;
+  const filterCarCompanies = companies2.map(function(company) {
+    company.users= filterUsers(company.users);
+    company.usersLength = company.users.length;
+    return company;
+  });
+  return filterCarCompanies;
 
-// -----------------------------------------------------------------------------
-// INSTRUCTIONS EN FRANÇAIS
+  function filterUsers(usersList) {
+    const newList= usersList.filter(hasCar);
+    return newList;
+  }
 
-// Créer une fonction prenant en paramètre la variable "companies" et le
-// booléen "hasCar". Pour chaque "company" vous devez garder uniquement les
-// "users" dont la valeur de l'attribut "car" est égal au paramètre de la
-// fonction "hasCar" et l'attribut "usersLength" doit renseigner le nombre de
-// "users" correspondant au paramètre "hasCar".
+  function hasCar(elemento) {
+    return elemento.car === HASCAR;
+  }
+}
