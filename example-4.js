@@ -2,7 +2,7 @@ import {cleanConsole, createAll} from './data';
 const companies = createAll();
 
 cleanConsole(4, companies);
-console.log('---- EXAMPLE 4 --- ', 'Put here your function');
+console.log('---- EXAMPLE 4 --- ', camiloEX4());
 
 // -----------------------------------------------------------------------------
 // INSTRUCCIONES EN ESPAÑOL
@@ -13,20 +13,16 @@ console.log('---- EXAMPLE 4 --- ', 'Put here your function');
 // dicha "company". Los "users" deben ordenarse de acuerdo con sus edad
 // (de mayor a menor).
 
-// -----------------------------------------------------------------------------
-// INSTRUCTIONS IN ENGLISH
-
-// Create a function taking as parameter the "companies" variable and grouping
-// all "users" of all "companies" in a single table. Each "user"
-// must have a new attribute "company" having for value the name of the "company"
-// to which it belongs. The "users" must be sorted according to their
-// age (from oldest to youngest).
-
-// -----------------------------------------------------------------------------
-// INSTRUCTIONS EN FRANÇAIS
-
-// Créer une fonction prenant en paramètre la variable "companies" et regroupant
-// tous les "users" de toutes les "companies" dans un seul tableau. Chaque "user"
-// doit avoir un nouvel attribut "company" ayant pour valeur le nom de la "company"
-// à laquelle il appartient. Les "users" doivent être triés en fonction de leur
-// âge (du plus vieux au plus jeune).
+export function camiloEX4() {
+  const companies4= companies;
+  console.log(companies4);
+  const newListGroup= companies4.map(function(company) {
+    company.users= company.users.map(function(user) {
+      user.company = company.name;
+      return user;
+    });
+    return company.users;
+  });
+  const userList1 = newListGroup.flat(3);
+  return userList1;
+}
