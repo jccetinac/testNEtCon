@@ -1,9 +1,9 @@
 import {cleanConsole, createAll} from './data';
-
+import {camiloEX1} from './example-1';
 const companies = createAll();
 
 cleanConsole(3, companies);
-console.log('---- EXAMPLE 3 --- ', 'Put here your function');
+console.log('---- EXAMPLE 3 --- ', camiloEX3());
 
 // -----------------------------------------------------------------------------
 // INSTRUCCIONES EN ESPAÑOL
@@ -14,18 +14,25 @@ console.log('---- EXAMPLE 3 --- ', 'Put here your function');
 // Debes probar la operación de esta función importando la función creada
 // en el "example-1.js".
 
-// -----------------------------------------------------------------------------
-// INSTRUCTIONS IN ENGLISH
+function camiloEX3() {
+  const Ex1= camiloEX1();
+  const newList= Ex1.map(function(company) {
+    company.users= company.users.map(function(user) {
+      user = [user.firstName, user.lastName];
+      return user;
+    });
+    company = [company.users, company.name].flat(2).filter(isNotEmpty);
+    return company;
+  });
+  const isCapitalized = newList.flat().filter(checkUppercase).length === 0? true : false;
+  return isCapitalized;
+}
 
-// Create a function taking the "companies" variable as a parameter and returning
-// a boolean validating that all the names of the companies and the attributes "firstName"
-// and "lastName" of "users" are capitalized. You must test the operation
-// of this function by importing the function created for "example-1.js".
+function isNotEmpty(elemento) {
+  return elemento !== '';
+}
 
-// -----------------------------------------------------------------------------
-// INSTRUCTIONS EN FRANÇAIS
-
-// Créer une fonction prenant en paramètre la variable "companies" et renvoyant
-// un booléen validant que tous les noms des "company" et les attributs "firstName"
-// et "lastName" des "users" sont en majuscules. Vous devez tester le fonctionnement
-// de cette fonction en important la fonction créée pour "example-1.js".
+function checkUppercase(string) {
+  const character = string[0];
+  return character !== character.toUpperCase();
+}
