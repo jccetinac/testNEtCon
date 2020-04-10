@@ -3,15 +3,15 @@ import {cleanConsole, createAll} from './data';
 const companies = createAll();
 
 cleanConsole(7, companies);
-console.log('---- EXAMPLE 7 part 1 --- ', 'Put here your function');
-console.log('---- EXAMPLE 7 part 2 --- ', 'Put here your function');
-console.log('---- EXAMPLE 7 part 3 --- ', 'Put here your function');
-console.log('---- EXAMPLE 7 part 4 --- ', 'Put here your function');
-console.log('---- EXAMPLE 7 part 5 --- ', 'Put here your function');
-console.log('---- EXAMPLE 7 part 6 --- ', 'Put here your function');
-console.log('---- EXAMPLE 7 part 7 --- ', 'Put here your function');
-console.log('---- EXAMPLE 7 part 8 --- ', 'Put here your function');
-console.log('---- EXAMPLE 7 part 9 --- ', 'Put here your function');
+console.log('---- EXAMPLE 7 part 1 --- ', filterById(2));
+console.log('---- EXAMPLE 7 part 2 --- ', removeById(0));
+console.log('---- EXAMPLE 7 part 3 --- ', createPatch(0));
+console.log('---- EXAMPLE 7 part 4 --- ', addUserCompany(0, 'Juan', 'Delgado', 35));
+console.log('---- EXAMPLE 7 part 5 --- ', createPUT(0));
+console.log('---- EXAMPLE 7 part 6 --- ', removeUserCompany(0, 1));
+console.log('---- EXAMPLE 7 part 7 --- ', createPatchUser(2, 2));
+console.log('---- EXAMPLE 7 part 8 --- ', createUserPUT(2, 2));
+console.log('---- EXAMPLE 7 part 9 --- ', changeUserCompany(0, 1, 0));
 
 // -----------------------------------------------------------------------------
 // INSTRUCCIONES EN ESPAÑOL
@@ -19,12 +19,33 @@ console.log('---- EXAMPLE 7 part 9 --- ', 'Put here your function');
 // Parte 1: Crear una función tomando como parámetro un "id" de "company" y
 // devolviendo el nombre de esta "company".
 
+function filterById(id) {
+  const getCompany = companies.filter((company) => company.id === id)[0];
+  return getCompany.name;
+}
+
 // Parte 2: Crear una función tomando como parámetro un "id" de "company" y
 // quitando la "company" de la lista.
 
+function removeById(id) {
+  const getCompanies = companies.filter((company) => company.id !== id);
+  return getCompanies;
+}
 // Parte 3: Crear una función tomando como parámetro un "id" de "company" y
 // permitiendo hacer un PATCH (como con una llamada HTTP) en todos los
 // atributos de esta "company" excepto en el atributo "users".
+
+function createPatch(id) {
+  const getCompany = companies.filter((company) => company.id === id)[0];
+  const base= 'company';
+  const newCompany = {
+    name: base + '/name/' + getCompany.name,
+    isOpen: base + '/isOpen/' + getCompany.isOpen,
+    usersLength: base + '/usersLength/' + getCompany.usersLength,
+    id: base + '/id/' + getCompany.id,
+  };
+  return newCompany;
+}
 
 // Parte 4: Crear una función tomando como parámetro un "id" de "company" y un
 // nuevo "user" cuyo el apelido es "Delgado", el nombre "Juan", de 35 años y
@@ -32,103 +53,160 @@ console.log('---- EXAMPLE 7 part 9 --- ', 'Put here your function');
 // "company" y tener un "id" generado automáticamente. La función también debe modificar
 // el atributo "usersLength" de "company".
 
+function addUserCompany(idCompany, nameUser, lastNameUser, ageUser) {
+  const newList = companies.map( function(company) {
+    const newUser={
+      firstName: nameUser,
+      lastName: lastNameUser,
+      age: ageUser,
+      car: true,
+      id: Math.floor(Math.random()*100 + company.usersLength),
+    };
+    if (company.id===idCompany) {
+      company.users.push(newUser);
+      company.usersLength= company.usersLength +1;
+    }
+    return company;
+  },
+  );
+  return newList;
+}
+
 // Parte 5: Crear una función tomando como parámetro un "id" de "company" y
 // permitiendo hacer un PUT (como con una llamada HTTP) en esta "company" excepto
 // en el atributo "users".
+
+function createPUT(id) {
+  const companyPayLoad = companies.filter((company) => company.id === id)[0];
+  fetch('https://companies.com/company/id/' + id, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(companyPayLoad),
+  })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error Test:', error);
+      });
+}
 
 // Parte 6: Crear una función tomando como parámetro un "id" de "company" y un
 // "id" de "user". La función debe quitar este "user" de la lista de "users"
 // de "company" y cambiar el atributo "usersLength" de "company".
 
+function removeUserCompany(idCompany, idUser) {
+  const newList = companies.map(function(company) {
+    if (company.id===idCompany) {
+      company.users= filterUsers(company.users);
+      company.usersLength= company.usersLength -1;
+    }
+    return company;
+  },
+  );
+  return newList;
+  function filterUsers(usersList) {
+    const newList= usersList.filter(checkId);
+    return newList;
+  }
+
+  function checkId(elemento) {
+    return elemento.id !== idUser;
+  }
+}
+
 // Parte 7: Crear una función tomando como parámetro un "id" de "company" y un
 // "id" de "user" que permite hacer un PATCH (como con una llamada HTTP) en este
 // "user".
+
+function createPatchUser(idCompany, idUser) {
+  const getCompany = companies.filter((company) => company.id === idCompany)[0];
+  const getuser = getCompany.users.filter((user) => user.id === idUser)[0];
+  const base= getCompany.name + '/user/';
+  const newUser = {
+    firstName: base + 'firstName' + getuser.firstName,
+    lastName: base + 'lastName' + getuser.lastName,
+    age: base + 'lastName' + getuser.lastName,
+    car: base + 'car' + getuser.car,
+    id: base + 'id' + getuser.id,
+  };
+  return newUser;
+}
+
 
 // Parte 8: Crear una función tomando como parámetro un "id" de "company" y un
 // "id" de "user" que permite hacer un PUT (como con una llamada HTTP) en este
 // "user".
 
+function createUserPUT(idCompany, idUser) {
+  const getCompany = companies.filter((company) => company.id === idCompany)[0];
+  const userPayLoad = getCompany.users.filter((user) => user.id === idUser)[0];
+
+  fetch('https://companies.com/company/user/' + idUser, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(userPayLoad),
+  })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Success:', data);
+      })
+      .catch((error) => {
+        console.error('Error Test:', error);
+      });
+}
 // Parte 9: Crear una función tomando como parámetro dos "id" de "company" y
 // un "id" de "user". La función debe permitir que el user sea transferido de la
 // primera "company" a la segunda "company". El atributo "usersLength" de cada
 // "company" debe actualizarse.
 
-// -----------------------------------------------------------------------------
-// INSTRUCTIONS IN ENGLISH
+function changeUserCompany(idCompany1, idCompany2, idUser) {
+//  get user
+  const movedUser = companies.map(function(company) {
+    if (company.id===idCompany1) {
+      const userToMove = filterUsers(company.users)[0];
+      return userToMove;
+    }
+  },
+  )[0];
+  //  move user
+  const listFinal = companies.map(function(company) {
+    if (company.id===idCompany1) {
+      company.users= removeUsers(company.users);
+      company.usersLength= company.usersLength -1;
+    }
 
-// Part 1: Create a function taking as parameter an "id" of "company" and
-// returning the name of this "company".
+    if (company.id===idCompany2) {
+      company.users.push(movedUser);
+      company.usersLength= company.usersLength +1;
+    }
 
-// Part 2: Create a function taking as parameter an "id" of "company" and
-// removing the "company" from the list.
+    return company;
+  },
+  );
+  //  remove user
+  function removeUsers(usersList) {
+    const newList= usersList.filter(removeId);
+    return newList;
+  }
+  //  get user
+  function filterUsers(usersList) {
+    const newList= usersList.filter(checkId);
+    return newList;
+  }
+  //  check
+  function checkId(elemento) {
+    return elemento.id === idUser;
+  }
 
-// Part 3: Create a function taking as a parameter an "id" of "company" and
-// allowing to make a PATCH (as with an HTTP call) on all
-// attributes of this "company" except on the "users" attribute.
-
-// Part 4: Create a function taking as parameter an "id" of "company" and a
-// new "user" whose name is "Delgado", the first name "Juan", aged 35 and
-// a car. The new "user" must be added to the "users" list of this
-// "company" and have an automatically generated "id". The function must also modify
-// the "usersLength" attribute of "company".
-
-// Part 5: Create a function taking as parameter an "id" of "company" and
-// allowing to make a PUT (as with an HTTP call) on this "company" except
-// on the "users" attribute.
-
-// Part 6: Create a function taking as a parameter an "id" of "company" and a
-// "id" of "user". The function must remove this "user" from the list of "users"
-// from "company" and change the attribute "usersLength" from "company".
-
-// Part 7: Create a function taking as a parameter an "id" of "company" and a
-// "id" of "user" allowing to make a PATCH (as with an HTTP call) on this
-// "user".
-
-// Part 8: Create a function taking as a parameter an "id" of "company" and a
-// "id" of "user" allowing to make a PUT (as with an HTTP call) on this
-// "user".
-
-// Part 9: Create a function taking as parameter two "id" of "company" and
-// an "id" of "user". The function must allow the user to be transferred as a parameter
-// from the 1st "company" to the 2nd "company". The "usersLength" attribute of each
-// "company" must be updated.
-
-// -----------------------------------------------------------------------------
-// INSTRUCTIONS EN FRANÇAIS
-
-// Partie 1 : Créer une fonction prenant en paramètre un "id" de "company" et
-// retournant le nom de cette "company".
-
-// Partie 2 : Créer une fonction prenant en paramètre un "id" de "company" et
-// supprimant la "company" de la liste.
-
-// Partie 3 : Créer une fonction prenant en paramètre un "id" de "company" et
-// permettant de faire un PATCH (comme avec un appel HTTP) sur tous les
-// attributs de cette "company" sauf sur l'attribut "users".
-
-// Partie 4 : Créer une fonction prenant en paramètre un "id" de "company" et un
-// nouvel "user" dont le nom est "Delgado", le prénom "Juan", ayant 35 ans et
-// une voiture. Le nouvel "user" doit être ajouté à la liste des "users" de cette
-// "company" et avoir un "id" généré automatiquement. La fonction doit aussi modifier
-// l'attribut "usersLength" de "company".
-
-// Partie 5 : Créer une fonction prenant en paramètre un "id" de "company" et
-// permettant de faire un PUT (comme avec un appel HTTP) sur cette "company" sauf
-// sur l'attribut "users".
-
-// Partie 6 : Créer une fonction prenant en paramètre un "id" de "company" et un
-// "id" de "user". La fonction doit supprimer cet "user" de la liste des "users"
-// de la "company" et modifier l'attribut "usersLength" de "company".
-
-// Partie 7 : Créer une fonction prenant en paramètre un "id" de "company" et un
-// "id" de "user" permettant de faire un PATCH (comme avec un appel HTTP) sur cet
-// "user".
-
-// Partie 8 : Créer une fonction prenant en paramètre un "id" de "company" et un
-// "id" de "user" permettant de faire un PUT (comme avec un appel HTTP) sur cet
-// "user".
-
-// Partie 9 : Créer une fonction prenant en paramètre deux "id" de "company" et
-// un "id" de "user". La fonction doit permettre de transférer l'user en paramètre
-// de la 1re "company" à la 2e "company". L'attribut "usersLength" de chaque
-// "company" doit être mis à jour.
+  //  remove
+  function removeId(elemento) {
+    return elemento.id !== idUser;
+  }
+  return listFinal;
+}
